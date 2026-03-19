@@ -1,21 +1,22 @@
-const fs = require("fs");
+const { loadDB, saveDB, getUser } = require("../economy");
 
 module.exports = {
   name: "work",
   execute: async (sock, msg) => {
 
-    let db = JSON.parse(fs.readFileSync("./database.json"));
-    let user = msg.key.participant || msg.key.remoteJid;
+    const id = msg.key.remoteJid;
 
-    if (!db[user]) db[user] = { money: 0 };
+    let db = loadDB();
+    let user = getUser(db, id);
 
-    const earned = Math.floor(Math.random() * 300) + 100;
-    db[user].money += earned;
+    const earnings = Math.floor(Math.random() * 300) + 100;
 
-    await sock.sendMessage(msg.key.remoteJid, {
-      text: `⚡ Work complete.\nEarned: ${earned} coins`
+    user.money += earnings;
+
+    saveDB(db);
+
+    await sock.sendMessage(id, {
+      text: `⚡ You worked under Voltaria’s system.\nEarned: ${earnings} coins`
     });
-
-    fs.writeFileSync("./database.json", JSON.stringify(db, null, 2));
   }
 };
