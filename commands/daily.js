@@ -1,20 +1,34 @@
-const fs = require("fs");
+const { loadDB, saveDB, getUser } = require("../economy");
 
 module.exports = {
   name: "daily",
   execute: async (sock, msg) => {
 
-    let db = JSON.parse(fs.readFileSync("./database.json"));
-    let user = msg.key.participant || msg.key.remoteJid;
+    const id = msg.key.remoteJid;
 
-    if (!db[user]) db[user] = { money: 0 };
+    let db = loadDB();
+    let user = getUser(db, id);
 
-    db[user].money += 500;
+    const now = Date.now();
+    const cooldown = 24 * 60 * 60 * 1000; // 24h
 
-    await sock.sendMessage(msg.key.remoteJid, {
-      text: "⚡ +500 coins added. Don’t waste it."
+    if (now - user.lastDaily < cooldown) {
+      const remaining = cooldown - (now - user.lastDaily);
+      const hours = Math.ceil(remaining / (1000 * 60 * 60));
+
+      return sock.sendMessage(id, {
+        text: `⚡ Daily already claimed.\nCome back in ${hours}h.`
+      });
+    }
+
+    const reward = 500;
+    user.money += reward;
+    user.lastDaily = now;
+
+    saveDB(db);
+
+    await sock.sendMessage(id, {
+      text: `⚡ Daily reward claimed!\n+${reward} coins`
     });
-
-    fs.writeFileSync("./database.json", JSON.stringify(db, null, 2));
   }
 };
