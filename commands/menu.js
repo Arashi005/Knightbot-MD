@@ -2,31 +2,42 @@ module.exports = {
   name: "menu",
   execute: async (sock, msg) => {
 
-    const text = `
+    const menu = `
 ╭─⚡ V O L T A R I A ⚡─╮
-│ "I don’t take orders. I process requests."
 │
-├─ SYSTEM
-│ .menu .ping .alive
+│ "I respond… I don’t obey."
 │
-├─ AI CORE
-│ .ai <text>
+├── ⚙️ SYSTEM
+│ .menu
+│ .ping
+│ .alive
+│
+├── 🤖 AI
+│ .ai
+│
+├── 😈 FUN
 │ .insult
 │
-├─ ECONOMY
-│ .balance .daily .work
+├── 💰 ECONOMY
+│ .balance
+│ .daily
+│ .work
 │
-├─ MEDIA
-│ .play .weather .tts
-│
-├─ MODERATION
-│ .warn .unmute .unban
+├── 🛡️ MODERATION
+│ .warn
+│ .unban
+│ .unmute
 │
 ╰────────────────────╯
 
-⚡ Voltaria-MD online
+⚡ Status: ONLINE
+⚡ Mode: Cold Active
+⚡ Voltaria-MD v2.0.0
 `;
 
-    await sock.sendMessage(msg.key.remoteJid, { text });
+    await sock.sendMessage(msg.key.remoteJid, {
+      text: menu
+    });
+
   }
 };
