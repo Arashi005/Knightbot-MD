@@ -1,25 +1,31 @@
 module.exports = {
   name: "ai",
-  execute: async (sock, msg, args) => {
+  execute: async (sock, msg) => {
 
-    if (!args.length) {
+    const text =
+      msg.message?.conversation ||
+      msg.message?.extendedTextMessage?.text || "";
+
+    const args = text.split(" ").slice(1).join(" ");
+
+    if (!args) {
       return sock.sendMessage(msg.key.remoteJid, {
-        text: "Speak clearly. I don’t decode silence."
+        text: "⚡ Speak something. Don’t waste my time with silence."
       });
     }
 
     const replies = [
-      "That was weak.",
-      "Try again. Properly this time.",
-      "I expected intelligence.",
-      "No. Just no.",
-      "Even a calculator would do better."
+      "Hmm… that’s all you’ve got?",
+      "I’ve seen better logic in broken code.",
+      "Try again. This one is weak.",
+      "Interesting… but still meaningless.",
+      "You talk a lot for someone saying nothing."
     ];
 
-    const res = replies[Math.floor(Math.random() * replies.length)];
+    const response = replies[Math.floor(Math.random() * replies.length)];
 
     await sock.sendMessage(msg.key.remoteJid, {
-      text: `⚡ Voltaria:\n${res}`
+      text: `⚡ VOLTARIA AI:\n\n${response}`
     });
   }
 };
